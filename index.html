@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My First Medical Dictionary</title>
+  <style>
+    /* ── Global Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: #fef6e4;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      background: linear-gradient(135deg, #f9a8d4 0%, #a5f3fc 100%);
+      padding: 20px 24px 16px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      color: #fff;
+      text-shadow: 1px 2px 4px rgba(0,0,0,.15);
+      letter-spacing: .5px;
+    }
+
+    header p {
+      color: #fff;
+      opacity: .9;
+      font-size: .95rem;
+      margin-top: 4px;
+    }
+
+    /* ── Main Content ── */
+    main {
+      width: 100%;
+      max-width: 700px;
+      padding: 40px 20px 60px;
+      flex: 1;
+    }
+
+    /* ── Search Section ── */
+    #search-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    #search-section .tagline {
+      font-size: 1.15rem;
+      color: #666;
+      text-align: center;
+    }
+
+    .search-box {
+      display: flex;
+      width: 100%;
+      gap: 10px;
+    }
+
+    #search-input {
+      flex: 1;
+      padding: 14px 20px;
+      font-size: 1.1rem;
+      border: 3px solid #f9a8d4;
+      border-radius: 50px;
+      outline: none;
+      background: #fff;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    #search-input:focus {
+      border-color: #ec4899;
+      box-shadow: 0 0 0 4px rgba(236,72,153,.12);
+    }
+
+    #search-btn {
+      padding: 14px 26px;
+      font-size: 1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f472b6, #60a5fa);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      white-space: nowrap;
+    }
+
+    #search-btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
+    #search-btn:active { transform: translateY(0); }
+
+    /* ── Result Area ── */
+    #result-area {
+      margin-top: 36px;
+      width: 100%;
+    }
+
+    /* ── Word Card ── */
+    .word-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 32px 36px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.10);
+      animation: fadeUp .35s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Word heading row */
+    .word-header {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .word-title {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #1e3a5f;
+      line-height: 1;
+    }
+
+    .word-label {
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 50px;
+    }
+
+    .word-plural {
+      font-size: .9rem;
+      color: #888;
+      margin-left: auto;
+    }
+
+    /* Listen button */
+    .listen-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+      color: #fff;
+      font-size: .95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      margin-bottom: 24px;
+    }
+
+    .listen-btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
+    .listen-btn:active { transform: translateY(0); }
+
+    /* Image placeholder */
+    .word-image {
+      width: 100%;
+      background: linear-gradient(135deg, #fce7f3, #e0f2fe);
+      border-radius: 16px;
+      padding: 28px 20px;
+      text-align: center;
+      font-size: .9rem;
+      color: #64748b;
+      margin-bottom: 24px;
+      border: 2px dashed #cbd5e1;
+    }
+
+    .word-image .img-icon { font-size: 3rem; display: block; margin-bottom: 8px; }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 2px dashed #f0e0fa;
+      margin: 18px 0;
+    }
+
+    /* Section labels */
+    .section-label {
+      font-size: .7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #a78bfa;
+      margin-bottom: 8px;
+    }
+
+    /* Definition */
+    .definition-text {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #374151;
+      margin-bottom: 20px;
+    }
+
+    /* Example sentences */
+    .examples-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .examples-list li {
+      background: #f0fdf4;
+      border-left: 4px solid #4ade80;
+      border-radius: 0 10px 10px 0;
+      padding: 10px 14px;
+      font-size: .97rem;
+      color: #374151;
+      line-height: 1.5;
+    }
+
+    .examples-list li::before {
+      content: '\201C';
+      color: #86efac;
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-right: 2px;
+    }
+
+    .examples-list li::after {
+      content: '\201D';
+      color: #86efac;
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-left: 2px;
+    }
+
+    /* Pronunciation text */
+    .word-pronunciation {
+      font-size: .95rem;
+      color: #64748b;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    /* Synonyms / Antonyms tags */
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .tag {
+      background: #ede9fe;
+      color: #6d28d9;
+      font-size: .85rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 50px;
+    }
+
+    .tag.antonym {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .no-entry {
+      font-size: .9rem;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    /* ── Word Cards Grid ── */
+    #word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+      margin-top: 36px;
+      width: 100%;
+    }
+
+    .grid-card {
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,.10);
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s;
+      border: 3px solid transparent;
+    }
+
+    .grid-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 28px rgba(0,0,0,.15);
+      border-color: #f472b6;
+    }
+
+    .grid-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .grid-card-label {
+      text-align: center;
+      padding: 10px 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e3a5f;
+      letter-spacing: .3px;
+    }
+
+    /* ── Not Found / Coming Soon ── */
+    .coming-soon {
+      background: #fff;
+      border-radius: 24px;
+      padding: 40px 36px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,.08);
+      animation: fadeUp .35s ease both;
+    }
+
+    .coming-soon .cs-icon { font-size: 3.5rem; display: block; margin-bottom: 12px; }
+
+    .coming-soon h2 {
+      font-size: 1.5rem;
+      color: #1e3a5f;
+      margin-bottom: 10px;
+    }
+
+    .coming-soon p {
+      font-size: 1rem;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    /* ── Footer ── */
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 16px;
+      font-size: .8rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header>
+    <h1>📖 My First Medical Dictionary</h1>
+    <p>Your friendly dictionary for curious kids!</p>
+  </header>
+
+  <!-- ── Main ── -->
+  <main>
+    <section id="search-section">
+      <p class="tagline">Type a word below and discover what it means! 🌟</p>
+
+      <div class="search-box">
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Search a word… e.g. cough"
+          autocomplete="off"
+          aria-label="Search for a word"
+        />
+        <button id="search-btn">Search 🔍</button>
+      </div>
+    </section>
+
+    <!-- Word cards grid -->
+    <div id="word-grid"></div>
+
+    <!-- Results are injected here by JavaScript -->
+    <div id="result-area" aria-live="polite"></div>
+  </main>
+
+  <footer>
+    WordBuddy · Applied Linguistics Group Project · 2026
+  </footer>
+
+  <!-- ══════════════════════════════════════════════════
+       JAVASCRIPT — All logic below
+  ══════════════════════════════════════════════════ -->
+  <script>
+    // ──────────────────────────────────────────────────
+    // DICTIONARY DATABASE
+    // ──────────────────────────────────────────────────
+    // HOW TO ADD A NEW WORD (for group members):
+    //
+    //   1. Copy the block below starting at "cough: {"
+    //      all the way to its closing "},"
+    //   2. Paste it right after that block (inside dictionaryData {}).
+    //   3. Change the key from "cough" to your word in LOWERCASE.
+    //   4. Fill in the fields: label, plural, definition, examples, imagePlaceholder.
+    //   5. In the "definition" field, use the special %%word%% syntax to mark any
+    //      clickable hyperlink word.  Example:  "%%air%% and %%water%% are important."
+    //   6. Save the file — done!
+    // ──────────────────────────────────────────────────
+
+    const dictionaryData = {
+
+      // ── cough ──────────────────────────────────────
+      cough: {
+        word:        "Cough",
+        label:       "noun",
+        plural:      "coughs",
+        pronunciation: "kôf",
+
+        definition: "Forcing out air suddenly and noisily through your throat, for example when you have a cold.",
+
+        examples: [
+          "I have a cold and a bad cough.",
+          "He made a loud noise because of a sudden cough.",
+        ],
+
+        synonyms:  ["cold", "hack"],
+        antonyms:  [],
+
+        imagePlaceholder: "A person coughing",
+        imageSrc: "cough_photo.jpg",
+
+        // Path to a pronunciation audio file (mp3 / m4a).
+        audioSrc: "cough.m4a",
+      },
+
+      // ── sneeze ─────────────────────────────────────
+      // TODO: replace dummy data with real content
+      sneeze: {
+        word:          "Sneeze",
+        label:         "noun",
+        plural:        "sneezes",
+        pronunciation: "snēz",
+        definition:    "To suddenly push air out of your nose and mouth with a loud sound, usually because something is irritating your nose.",
+        examples: [
+          "She began to sneeze when the cat came into the room.",
+          "Cover your mouth when you sneeze!",
+        ],
+        synonyms:  ["achoo"],
+        antonyms:  [],
+        imagePlaceholder: "A person sneezing",
+        imageSrc:  "", // TODO: add image file name e.g. "sneeze.jpg"
+        audioSrc:  "", // TODO: add audio file name e.g. "sneeze.m4a"
+      },
+
+      // ── blood ──────────────────────────────────────
+      // TODO: replace dummy data with real content
+      blood: {
+        word:          "Blood",
+        label:         "noun",
+        plural:        "—",
+        pronunciation: "bləd",
+        definition:    "The red liquid that flows through the bodies of humans and animals, carrying oxygen and nutrients.",
+        examples: [
+          "The doctor took a small amount of blood for the test.",
+          "Blood carries oxygen to all parts of your body.",
+        ],
+        synonyms:  ["gore"],
+        antonyms:  [],
+        imagePlaceholder: "An illustration of blood",
+        imageSrc:  "", // TODO: add image file name e.g. "blood.jpg"
+        audioSrc:  "", // TODO: add audio file name e.g. "blood.m4a"
+      },
+
+      // ── needle ─────────────────────────────────────
+      // TODO: replace dummy data with real content
+      needle: {
+        word:          "Needle",
+        label:         "noun",
+        plural:        "needles",
+        pronunciation: "ˈnēdəl",
+        definition:    "A very thin, sharp metal tool used by doctors to put medicine into your body or to take blood.",
+        examples: [
+          "The nurse used a needle to give him the vaccine.",
+          "I was scared of the needle at the doctor's office.",
+        ],
+        synonyms:  ["syringe", "injection"],
+        antonyms:  [],
+        imagePlaceholder: "An illustration of a medical needle",
+        imageSrc:  "", // TODO: add image file name e.g. "needle.jpg"
+        audioSrc:  "", // TODO: add audio file name e.g. "needle.m4a"
+      },
+
+      // ── fever ──────────────────────────────────────
+      // TODO: replace dummy data with real content
+      fever: {
+        word:          "Fever",
+        label:         "noun",
+        plural:        "fevers",
+        pronunciation: "ˈfēvər",
+        definition:    "A body temperature that is higher than normal, usually a sign that your body is fighting an infection.",
+        examples: [
+          "She had a high fever and had to stay in bed.",
+          "The doctor said his fever would go down after some rest.",
+        ],
+        synonyms:  ["temperature", "high temperature"],
+        antonyms:  [],
+        imagePlaceholder: "An illustration of a person with a fever",
+        imageSrc:  "", // TODO: add image file name e.g. "fever.jpg"
+        audioSrc:  "", // TODO: add audio file name e.g. "fever.m4a"
+      },
+
+    }; // <- end of dictionaryData — don't remove this line
+
+
+    // ──────────────────────────────────────────────────
+    // RENDER HELPERS
+    // ──────────────────────────────────────────────────
+
+    /**
+     * Plays the pronunciation audio, or shows an alert if no file is set.
+     */
+    function playPronunciation(src, word) {
+      if (src) {
+        // A real audio file is available — play it.
+        var audio = new Audio(src);
+        audio.play().catch(function() {
+          alert("Sorry, audio could not be played right now.");
+        });
+      } else {
+        // Placeholder: swap this alert for a real Audio() call once you have the mp3.
+        alert(
+          "🔊 Pronunciation for \"" + word + "\" coming soon!\n\n" +
+          "To add audio:\n" +
+          "1. Save your mp3 file next to index.html (e.g. cough.mp3)\n" +
+          "2. Set  audioSrc: \"cough.mp3\"  in dictionaryData."
+        );
+      }
+    }
+
+    /**
+     * Builds and returns the full word-card HTML string.
+     */
+    function buildWordCard(entry) {
+      var examplesHTML = entry.examples
+        .map(function(ex) { return "<li>" + ex + "</li>"; })
+        .join("");
+
+      var pluralText = entry.plural
+        ? '<span class="word-plural">plural: <strong>' + entry.plural + "</strong></span>"
+        : "";
+
+      var pronunciationHTML = entry.pronunciation
+        ? '<p class="word-pronunciation">/' + entry.pronunciation + '/</p>'
+        : "";
+
+      var synonymsHTML = (entry.synonyms && entry.synonyms.length > 0)
+        ? entry.synonyms.map(function(w) { return '<span class="tag">' + w + "</span>"; }).join("")
+        : '<span class="no-entry">No specific synonyms</span>';
+
+      var antonymsHTML = (entry.antonyms && entry.antonyms.length > 0)
+        ? entry.antonyms.map(function(w) { return '<span class="tag antonym">' + w + "</span>"; }).join("")
+        : '<span class="no-entry">No specific antonyms</span>';
+
+      return (
+        '<div class="word-card">' +
+
+          '<div class="word-header">' +
+            '<span class="word-title">' + entry.word + "</span>" +
+            '<span class="word-label">' + entry.label + "</span>" +
+            pluralText +
+          "</div>" +
+
+          pronunciationHTML +
+
+          "<button" +
+            ' class="listen-btn"' +
+            ' onclick="playPronunciation(\'' + entry.audioSrc + '\', \'' + entry.word + '\')"' +
+            ' aria-label="Listen to pronunciation of ' + entry.word + '"' +
+          ">" +
+            "🔊 Listen (US)" +
+          "</button>" +
+
+          '<div class="word-image">' +
+            (entry.imageSrc
+              ? '<img src="' + entry.imageSrc + '" alt="' + entry.imagePlaceholder + '" style="width:320px;max-width:100%;border-radius:12px;display:block;margin:0 auto;" />'
+              : '<span class="img-icon">🖼️</span>' + entry.imagePlaceholder
+            ) +
+          "</div>" +
+
+          '<hr class="divider" />' +
+
+          '<p class="section-label">Definition</p>' +
+          '<p class="definition-text">' + entry.definition + "</p>" +
+
+          '<hr class="divider" />' +
+
+          '<p class="section-label">Example sentences</p>' +
+          '<ul class="examples-list">' + examplesHTML + "</ul>" +
+
+          '<hr class="divider" />' +
+
+          '<p class="section-label">Synonyms</p>' +
+          '<div class="tags-list">' + synonymsHTML + "</div>" +
+
+          '<hr class="divider" />' +
+
+          '<p class="section-label">Antonyms</p>' +
+          '<div class="tags-list">' + antonymsHTML + "</div>" +
+
+        "</div>"
+      );
+    }
+
+    /**
+     * Builds the "coming soon" card HTML string.
+     */
+    function buildComingSoon(query) {
+      return (
+        '<div class="coming-soon">' +
+          '<span class="cs-icon">🚧</span>' +
+          "<h2>Coming soon!</h2>" +
+          "<p>" +
+            'Your friends are working on ' +
+            "<strong>\"" + query + "\"</strong>" +
+            " right now.<br />Check back a little later! 😊" +
+          "</p>" +
+        "</div>"
+      );
+    }
+
+
+    // ──────────────────────────────────────────────────
+    // WORD GRID (cards shown on home screen)
+    // ──────────────────────────────────────────────────
+
+    function buildWordGrid() {
+      var grid = document.getElementById("word-grid");
+      var html = "";
+
+      Object.keys(dictionaryData).forEach(function(key) {
+        var entry = dictionaryData[key];
+        var imgHTML = entry.imageSrc
+          ? '<img src="' + entry.imageSrc + '" alt="' + entry.word + '" />'
+          : '<div style="height:160px;background:linear-gradient(135deg,#fce7f3,#e0f2fe);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🖼️</div>';
+
+        html +=
+          '<div class="grid-card" id="card-' + key + '" onclick="navigate(\'' + key + '\')">' +
+            imgHTML +
+            '<div class="grid-card-label">' + entry.word + '</div>' +
+          '</div>';
+      });
+
+      grid.innerHTML = html;
+    }
+
+    // ──────────────────────────────────────────────────
+    // ROUTING — URL hash (#word) controls what's shown
+    // ──────────────────────────────────────────────────
+
+    // Show the word detail view
+    function showWord(query) {
+      var result = document.getElementById("result-area");
+      var input  = document.getElementById("search-input");
+
+      document.getElementById("word-grid").style.display = "none";
+      input.value = query;
+
+      // Highlight the matching card
+      document.querySelectorAll(".grid-card").forEach(function(c) {
+        c.style.borderColor = "";
+      });
+      var card = document.getElementById("card-" + query);
+      if (card) card.style.borderColor = "#ec4899";
+
+      var entry = dictionaryData[query];
+      result.innerHTML = entry ? buildWordCard(entry) : buildComingSoon(query);
+      result.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // Show the home view (clear result)
+    function showHome() {
+      var result = document.getElementById("result-area");
+      var input  = document.getElementById("search-input");
+      result.innerHTML = "";
+      input.value = "";
+      document.getElementById("word-grid").style.display = "grid";
+      document.querySelectorAll(".grid-card").forEach(function(c) {
+        c.style.borderColor = "";
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // Navigate to a word — updates URL hash (pushes browser history)
+    function navigate(key) {
+      if (window.location.hash === "#" + key) {
+        // Same word tapped again → go back to home
+        history.pushState(null, "", window.location.pathname);
+        showHome();
+      } else {
+        window.location.hash = key;
+      }
+    }
+
+    // Read the current hash and render accordingly
+    function handleRoute() {
+      var hash = window.location.hash.replace("#", "").trim().toLowerCase();
+      if (hash) {
+        showWord(hash);
+      } else {
+        showHome();
+      }
+    }
+
+    // ──────────────────────────────────────────────────
+    // SEARCH BAR LOGIC
+    // ──────────────────────────────────────────────────
+
+    function searchWord(word) {
+      var input = document.getElementById("search-input");
+      var query = (word !== undefined ? word : input.value).trim().toLowerCase();
+      if (!query) return;
+      window.location.hash = query; // triggers hashchange → handleRoute
+    }
+
+    // ──────────────────────────────────────────────────
+    // INIT & EVENT LISTENERS
+    // ──────────────────────────────────────────────────
+
+    buildWordGrid();
+    handleRoute(); // render on first load (supports direct URL with hash)
+
+    // Browser back / forward buttons
+    window.addEventListener("hashchange", handleRoute);
+
+    // Search button click
+    document.getElementById("search-btn")
+      .addEventListener("click", function() { searchWord(); });
+
+    // Enter key in the input field
+    document.getElementById("search-input")
+      .addEventListener("keydown", function(e) {
+        if (e.key === "Enter") searchWord();
+      });
+
+  </script>
+</body>
+</html>
