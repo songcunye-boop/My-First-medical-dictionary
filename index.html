@@ -41,12 +41,158 @@
       margin-top: 4px;
     }
 
+    /* ── All Words link button (below cards on home) ── */
+    .all-words-link {
+      display: block;
+      text-align: center;
+      margin-top: 28px;
+    }
+
+    .all-words-link button {
+      padding: 10px 28px;
+      font-size: .95rem;
+      font-weight: 700;
+      border: 2px solid #f9a8d4;
+      border-radius: 50px;
+      background: #fff;
+      color: #ec4899;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+
+    .all-words-link button:hover {
+      background: linear-gradient(135deg, #f472b6, #60a5fa);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    /* ── Back to home button (on All Words page) ── */
+    .back-home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 24px;
+      font-size: .95rem;
+      font-weight: 700;
+      border: 2px solid #f9a8d4;
+      border-radius: 50px;
+      background: #fff;
+      color: #ec4899;
+      cursor: pointer;
+      margin-bottom: 24px;
+      transition: background .15s, color .15s;
+    }
+
+    .back-home-btn:hover {
+      background: linear-gradient(135deg, #f472b6, #60a5fa);
+      color: #fff;
+      border-color: transparent;
+    }
+
     /* ── Main Content ── */
     main {
       width: 100%;
       max-width: 700px;
       padding: 40px 20px 60px;
       flex: 1;
+    }
+
+    /* ── All Words List Page ── */
+    #all-words-area {
+      display: none;
+      width: 100%;
+      max-width: 860px;
+      padding: 40px 20px 60px;
+    }
+
+    .all-words-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #1e3a5f;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .list-card {
+      display: flex;
+      gap: 24px;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(0,0,0,.09);
+      margin-bottom: 24px;
+    }
+
+    .list-card-img {
+      width: 220px;
+      min-width: 220px;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .list-card-img-placeholder {
+      width: 220px;
+      min-width: 220px;
+      height: 220px;
+      background: linear-gradient(135deg, #fce7f3, #e0f2fe);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .list-card-body {
+      padding: 20px 20px 20px 0;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .list-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .list-card-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1e3a5f;
+    }
+
+    .list-card-body .word-label {
+      font-size: .7rem;
+    }
+
+    .list-card-body .word-pronunciation {
+      margin-bottom: 8px;
+      font-size: .88rem;
+    }
+
+    .list-card-body .section-label {
+      margin-top: 10px;
+    }
+
+    .list-card-body .definition-text {
+      font-size: .95rem;
+      margin-bottom: 0;
+    }
+
+    .list-card-body .examples-list li {
+      font-size: .88rem;
+      padding: 6px 10px;
+    }
+
+    .list-card-body .tags-list {
+      margin-bottom: 0;
+    }
+
+    .list-card-body .tag {
+      font-size: .78rem;
     }
 
     /* ── Search Section ── */
@@ -214,6 +360,13 @@
       margin-bottom: 20px;
     }
 
+    /* Key word highlight in examples */
+    .key-word {
+      color: #e02020;
+      font-style: italic;
+      font-weight: 600;
+    }
+
     /* Example sentences */
     .examples-list {
       list-style: none;
@@ -287,11 +440,20 @@
     /* ── Word Cards Grid ── */
     #word-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(6, 1fr);
       gap: 20px;
       margin-top: 36px;
       width: 100%;
     }
+
+    /* 上段3枚：各2列分 */
+    #word-grid .grid-card:nth-child(1) { grid-column: 1 / span 2; }
+    #word-grid .grid-card:nth-child(2) { grid-column: 3 / span 2; }
+    #word-grid .grid-card:nth-child(3) { grid-column: 5 / span 2; }
+
+    /* 下段2枚：中央揃え */
+    #word-grid .grid-card:nth-child(4) { grid-column: 2 / span 2; }
+    #word-grid .grid-card:nth-child(5) { grid-column: 4 / span 2; }
 
     .grid-card {
       background: #fff;
@@ -387,9 +549,21 @@
     <!-- Word cards grid -->
     <div id="word-grid"></div>
 
+    <!-- All Words link (shown on home only) -->
+    <div class="all-words-link" id="all-words-link">
+      <button onclick="navigate('all')">📋 View All Words</button>
+    </div>
+
     <!-- Results are injected here by JavaScript -->
     <div id="result-area" aria-live="polite"></div>
   </main>
+
+  <!-- ── All Words List Page ── -->
+  <div id="all-words-area">
+    <button class="back-home-btn" onclick="navigate('')">← Back to Home</button>
+    <p class="all-words-title">📚 All Words</p>
+    <div id="all-words-list"></div>
+  </div>
 
   <footer>
     WordBuddy · Applied Linguistics Group Project · 2026
@@ -457,7 +631,7 @@
         antonyms:  ["Not sick", "Acting normal"],
         imagePlaceholder: "A person sneezing",
         imageSrc:  "sneeze.jpg",
-        audioSrc:  "", // TODO: add audio file name e.g. "sneeze.m4a"
+        audioSrc:  "sneeze.m4a",
       },
 
       // ── blood ──────────────────────────────────────
@@ -465,18 +639,19 @@
       blood: {
         word:          "Blood",
         label:         "noun",
-        plural:        "—",
-        pronunciation: "bləd",
-        definition:    "The red liquid that flows through the bodies of humans and animals, carrying oxygen and nutrients.",
+        plural:        "",
+        pronunciation: "blʌd",
+        definition:    "The red liquid that flows through the bodies of humans and animals.",
         examples: [
-          "The doctor took a small amount of blood for the test.",
-          "Blood carries oxygen to all parts of your body.",
+          "Maintaining normal blood pressure is extremely important.",
+          "Blood pressure is regulated using negative feedback.",
+          "This medicine may affect blood sugar levels.",
         ],
         synonyms:  ["gore"],
         antonyms:  [],
         imagePlaceholder: "An illustration of blood",
         imageSrc:  "blood.jpg",
-        audioSrc:  "", // TODO: add audio file name e.g. "blood.m4a"
+        audioSrc:  "blood.m4a",
       },
 
       // ── needle ─────────────────────────────────────
@@ -485,17 +660,17 @@
         word:          "Needle",
         label:         "noun",
         plural:        "needles",
-        pronunciation: "ˈnēdəl",
-        definition:    "A very thin, sharp metal tool used by doctors to put medicine into your body or to take blood.",
+        pronunciation: "ˈniː.dəl",
+        definition:    "A very thin, hollow, pointed piece of metal that is connected to a syringe and used to take blood from the body or to put drugs or medicine in.",
         examples: [
-          "The nurse used a needle to give him the vaccine.",
-          "I was scared of the needle at the doctor's office.",
+          "The doctor inserted the needle into my arm.",
+          "Most children are afraid of needles.",
         ],
-        synonyms:  ["syringe", "injection"],
+        synonyms:  ["Injection", "Shot"],
         antonyms:  [],
         imagePlaceholder: "An illustration of a medical needle",
         imageSrc:  "needle.png",
-        audioSrc:  "", // TODO: add audio file name e.g. "needle.m4a"
+        audioSrc:  "needle.m4a",
       },
 
       // ── fever ──────────────────────────────────────
@@ -515,7 +690,7 @@
         antonyms:  ["Healthy", "Normal body temperature"],
         imagePlaceholder: "An illustration of a child with a fever",
         imageSrc:  "fever.jpg",
-        audioSrc:  "", // TODO: add audio file name e.g. "fever.m4a"
+        audioSrc:  "fever.m4a",
       },
 
     }; // <- end of dictionaryData — don't remove this line
@@ -524,6 +699,15 @@
     // ──────────────────────────────────────────────────
     // RENDER HELPERS
     // ──────────────────────────────────────────────────
+
+    // 例文中のキーワードを赤・イタリックにする
+    var keyWords = /\b(coughs?|coughing|sneezes?|sneezing|blood|needles?|fevers?)\b/gi;
+
+    function highlightKeyWords(text) {
+      return text.replace(keyWords, function(match) {
+        return '<span class="key-word">' + match + '</span>';
+      });
+    }
 
     /**
      * Plays the pronunciation audio, or shows an alert if no file is set.
@@ -551,7 +735,7 @@
      */
     function buildWordCard(entry) {
       var examplesHTML = entry.examples
-        .map(function(ex) { return "<li>" + ex + "</li>"; })
+        .map(function(ex) { return "<li>" + highlightKeyWords(ex) + "</li>"; })
         .join("");
 
       var pluralText = entry.plural
@@ -586,7 +770,7 @@
             ' onclick="playPronunciation(\'' + entry.audioSrc + '\', \'' + entry.word + '\')"' +
             ' aria-label="Listen to pronunciation of ' + entry.word + '"' +
           ">" +
-            "🔊 Listen (US)" +
+            "🔊 Listen" +
           "</button>" +
 
           '<div class="word-image">' +
@@ -671,7 +855,10 @@
       var result = document.getElementById("result-area");
       var input  = document.getElementById("search-input");
 
+      document.querySelector("main").style.display = "block";
+      document.getElementById("all-words-area").style.display = "none";
       document.getElementById("word-grid").style.display = "none";
+      document.getElementById("all-words-link").style.display = "none";
       input.value = query;
 
       // Highlight the matching card
@@ -692,7 +879,10 @@
       var input  = document.getElementById("search-input");
       result.innerHTML = "";
       input.value = "";
+      document.querySelector("main").style.display = "block";
+      document.getElementById("all-words-area").style.display = "none";
       document.getElementById("word-grid").style.display = "grid";
+      document.getElementById("all-words-link").style.display = "block";
       document.querySelectorAll(".grid-card").forEach(function(c) {
         c.style.borderColor = "";
       });
@@ -701,7 +891,11 @@
 
     // Navigate to a word — updates URL hash (pushes browser history)
     function navigate(key) {
-      if (window.location.hash === "#" + key) {
+      if (key === "") {
+        // Home button
+        history.pushState(null, "", window.location.pathname);
+        showHome();
+      } else if (window.location.hash === "#" + key) {
         // Same word tapped again → go back to home
         history.pushState(null, "", window.location.pathname);
         showHome();
@@ -710,10 +904,71 @@
       }
     }
 
+    // ── All Words List ──────────────────────────────
+
+    function buildAllWordsList() {
+      var container = document.getElementById("all-words-list");
+      var html = "";
+
+      Object.keys(dictionaryData).forEach(function(key) {
+        var e = dictionaryData[key];
+
+        var imgHTML = e.imageSrc
+          ? '<img class="list-card-img" src="' + e.imageSrc + '" alt="' + e.word + '" />'
+          : '<div class="list-card-img-placeholder">🖼️</div>';
+
+        var pronunciationHTML = e.pronunciation
+          ? '<p class="word-pronunciation">/' + e.pronunciation + '/</p>' : "";
+
+        var examplesHTML = e.examples
+          .map(function(ex) { return "<li>" + highlightKeyWords(ex) + "</li>"; }).join("");
+
+        var synonymsHTML = (e.synonyms && e.synonyms.length > 0)
+          ? e.synonyms.map(function(w) { return '<span class="tag">' + w + "</span>"; }).join("")
+          : '<span class="no-entry">No specific synonyms</span>';
+
+        var antonymsHTML = (e.antonyms && e.antonyms.length > 0)
+          ? e.antonyms.map(function(w) { return '<span class="tag antonym">' + w + "</span>"; }).join("")
+          : '<span class="no-entry">No specific antonyms</span>';
+
+        html +=
+          '<div class="list-card">' +
+            imgHTML +
+            '<div class="list-card-body">' +
+              '<div class="list-card-header">' +
+                '<span class="list-card-title">' + e.word + '</span>' +
+                '<span class="word-label">' + e.label + '</span>' +
+                (e.plural ? '<span class="word-plural">pl: <strong>' + e.plural + '</strong></span>' : '') +
+              '</div>' +
+              pronunciationHTML +
+              '<p class="section-label">Definition</p>' +
+              '<p class="definition-text">' + e.definition + '</p>' +
+              '<p class="section-label">Examples</p>' +
+              '<ul class="examples-list">' + examplesHTML + '</ul>' +
+              '<p class="section-label">Synonyms</p>' +
+              '<div class="tags-list">' + synonymsHTML + '</div>' +
+              '<p class="section-label">Antonyms</p>' +
+              '<div class="tags-list">' + antonymsHTML + '</div>' +
+            '</div>' +
+          '</div>';
+      });
+
+      container.innerHTML = html;
+    }
+
+    function showAllWords() {
+      document.getElementById("all-words-area").style.display = "block";
+      document.querySelector("main").style.display = "none";
+      buildAllWordsList();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     // Read the current hash and render accordingly
     function handleRoute() {
       var hash = window.location.hash.replace("#", "").trim().toLowerCase();
-      if (hash) {
+      if (hash === "all") {
+        showAllWords();
+      } else if (hash) {
         showWord(hash);
       } else {
         showHome();
